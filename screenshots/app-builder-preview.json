@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "إحصائيات إذاعة البحرين",
+      "hasCanvas": false,
+      "bodyTextLen": 37,
+      "bodyTextHash": "68e91335bbb71a4bd5be8f4cedbeb9501e31326758a366ad856b89d528dda0b0",
+      "bodyTextPrefix": "قناة إذاعة البحرين 0 إجمالي المشاهدات",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "إحصائيات إذاعة البحرين",
+      "hasCanvas": false,
+      "bodyTextLen": 37,
+      "bodyTextHash": "68e91335bbb71a4bd5be8f4cedbeb9501e31326758a366ad856b89d528dda0b0",
+      "bodyTextPrefix": "قناة إذاعة البحرين 0 إجمالي المشاهدات",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

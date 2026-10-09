@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إحصائيات قناة إذاعة البحرين</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      font-family: 'Tajawal', 'Segoe UI', system-ui, sans-serif;
+      background: #f8f9fa;
+      color: #202124;
+    }
+    .screen-shell {
+      width: 100%;
+      height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden;
+      padding: max(0.7rem, env(safe-area-inset-top, 0px), 1.6vmin);
+      padding-top: max(0.7rem, env(safe-area-inset-top));
+      padding-bottom: max(0.7rem, env(safe-area-inset-bottom));
+      display: flex;
+    }
+    .stat-board {
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.55rem, 1.4vmin, 1.35rem);
+      padding: clamp(0.85rem, 2.2vmin, 2rem);
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+    .stat-kicker {
+      text-align: center;
+      font-size: clamp(0.95rem, 1.6vw + 1.2vh, 1.5rem);
+      font-weight: 500;
+      color: #5f6368;
+    }
+    .stat-hero {
+      flex: 1.35 1 0;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(26, 115, 232, 0.35);
+    }
+    .stat-hero-num {
+      font-size: clamp(2.75rem, 7vw + 5vh, 11rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-hero-label {
+      text-align: center;
+      font-size: clamp(1.15rem, 2vw + 1.4vh, 2.25rem);
+      font-weight: 700;
+      color: #1a73e8;
+    }
+    .stat-tiles {
+      flex: 1 1 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(0.5rem, 1.4vmin, 1.15rem);
+    }
+    .stat-card {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f3f4f6;
+      border-radius: 14px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+      padding: clamp(0.65rem, 1.8vmin, 1.4rem) clamp(0.4rem, 1.2vmin, 1rem);
+    }
+    .stat-card .number {
+      font-size: clamp(2.1rem, 4.2vw + 3.2vh, 6.25rem);
+      font-weight: 700;
+      line-height: 0.95;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-card .label {
+      margin-top: 0.4em;
+      font-size: clamp(1rem, 1.4vw + 1.1vh, 1.65rem);
+      color: #5f6368;
+      font-weight: 600;
+    }
+    @media (min-width: 640px) {
+      .stat-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (orientation: landscape) and (max-height: 520px) {
+      .stat-board { gap: 0.45rem; padding: 0.7rem 0.9rem; }
+      .stat-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .flip-label-wrap {
+      display: inline-grid;
+      justify-items: center;
+      align-items: center;
+      max-width: 100%;
+    }
+    .flip-label-sizer {
+      grid-area: 1 / 1;
+      visibility: hidden;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      white-space: nowrap;
+    }
+    .flip-label {
+      grid-area: 1 / 1;
+      display: inline-block;
+      perspective: 800px;
+      min-height: 1.3em;
+      white-space: nowrap;
+    }
+    .flip-label .word {
+      display: inline-block;
+      transform-origin: 50% 50%;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      margin-inline: 0.14em;
+      overflow: hidden;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flip-label .word { transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen-shell">
+    <div class="stat-board">
+      <div class="stat-kicker" data-flip data-ar="قناة إذاعة البحرين" data-en="Radio Bahrain Channel"></div>
+      <div class="stat-hero"><div class="stat-hero-num" data-count="324941" data-decimals="0">0</div></div>
+      <div class="stat-hero-label" data-flip data-ar="إجمالي المشاهدات" data-en="Total Views"></div>
+      <div class="stat-tiles">
+        <div class="stat-card">
+          <div class="number" data-count="3.51" data-decimals="2" data-suffix="K">0</div>
+          <div class="label" data-flip data-ar="عدد المشتركين" data-en="Subscribers"></div>
+        </div>
+        <div class="stat-card">
+          <div class="number" data-count="629" data-decimals="0">0</div>
+          <div class="label" data-flip data-ar="عدد الفيديوهات" data-en="Videos"></div>
+        </div>
+        <div class="stat-card">
+          <div class="number" data-count="28" data-decimals="0">0</div>
+          <div class="label" data-flip data-ar="البرامج" data-en="Programs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/TextPlugin.min.js"></script>
+  <script>
+    gsap.registerPlugin(TextPlugin);
+    function wordsOf(text) { return text.trim().split(/\s+/).filter(Boolean); }
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+    }
+    function mountFlip(host) {
+      var ar = host.getAttribute("data-ar") || "";
+      var en = host.getAttribute("data-en") || "";
+      host.innerHTML =
+        '<span class="flip-label-wrap">' +
+          '<span class="flip-label-sizer" aria-hidden="true"><span>' + escapeHtml(ar) + '</span><span>' + escapeHtml(en) + '</span></span>' +
+          '<span class="flip-label" aria-live="polite"></span>' +
+        '</span>';
+      var el = host.querySelector(".flip-label");
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var showingAr = true;
+      var tween = null;
+      var paint = function (text, dir) {
+        el.setAttribute("dir", dir);
+        el.setAttribute("lang", dir === "rtl" ? "ar" : "en");
+        el.innerHTML = wordsOf(text).map(function (w) {
+          return '<span class="word">' + escapeHtml(w) + "</span>";
+        }).join(" ");
+      };
+      paint(ar, "rtl");
+      var flip = function () {
+        var nextAr = !showingAr;
+        var nextText = nextAr ? ar : en;
+        var nextDir = nextAr ? "rtl" : "ltr";
+        var nextWords = wordsOf(nextText);
+        if (reduce) { showingAr = nextAr; paint(nextText, nextDir); return; }
+        if (tween) tween.kill();
+        var tl = gsap.timeline({
+          onComplete: function () {
+            showingAr = nextAr;
+            Array.from(el.querySelectorAll(".word")).forEach(function (span, i) {
+              if (!nextWords[i]) span.remove();
+            });
+          }
+        });
+        tween = tl;
+        while (el.querySelectorAll(".word").length < nextWords.length) {
+          var span = document.createElement("span");
+          span.className = "word";
+          span.innerHTML = "&nbsp;";
+          span.style.opacity = "0";
+          el.appendChild(span);
+        }
+        el.setAttribute("dir", nextDir);
+        el.setAttribute("lang", nextAr ? "ar" : "en");
+        Array.from(el.querySelectorAll(".word")).forEach(function (span, i) {
+          var target = nextWords[i] || "";
+          var at = i * 0.09;
+          tl.to(span, { rotateX: 88, opacity: 0, duration: 0.24, ease: "power2.in" }, at);
+          tl.to(span, { duration: 0.32, text: { value: target || "\u00a0", delimiter: "" }, ease: "none" }, at + 0.24);
+          tl.fromTo(span, { rotateX: -88 }, { rotateX: 0, opacity: target ? 1 : 0, duration: 0.34, ease: "power2.out" }, at + 0.24);
+        });
+      };
+      setInterval(flip, 10000);
+    }
+    document.querySelectorAll("[data-count]").forEach(function (el, index) {
+      var target = Number(el.getAttribute("data-count"));
+      var decimals = Number(el.getAttribute("data-decimals") || "0");
+      var suffix = el.getAttribute("data-suffix") || "";
+      var state = { n: 0 };
+      var paint = function (n) {
+        var body = decimals > 0 ? n.toFixed(decimals) : Math.round(n).toLocaleString("en-US");
+        el.textContent = body + suffix;
+      };
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        paint(target);
+        return;
+      }
+      gsap.to(state, {
+        n: target,
+        duration: index === 0 ? 2 : 1.55,
+        delay: 0.08 + index * 0.14,
+        ease: "power3.out",
+        onUpdate: function () { paint(state.n); }
+      });
+    });
+  </script>
+</body>
+</html>
