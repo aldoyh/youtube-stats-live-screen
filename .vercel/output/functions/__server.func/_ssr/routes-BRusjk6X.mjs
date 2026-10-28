@@ -1,7 +1,7 @@
 import { i as __toESM } from "../_runtime.mjs";
 import { K as require_react, b as require_jsx_runtime } from "../_libs/@tanstack/react-router+[...].mjs";
 import { n as gsapWithCSS, t as TextPlugin } from "../_libs/gsap.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-DUHhQwjr.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-BRusjk6X.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function parseStat(value) {
@@ -24,34 +24,47 @@ function parseStat(value) {
 function formatStat(n, decimals, suffix) {
 	return (decimals > 0 ? n.toFixed(decimals) : Math.round(n).toLocaleString("en-US")) + suffix;
 }
-var CountUp = (0, import_react.forwardRef)(function CountUp({ value, className = "" }, ref) {
-	const elRef = (0, import_react.useRef)(null);
-	(0, import_react.useImperativeHandle)(ref, () => ({ play(duration = 1.2) {
-		const el = elRef.current;
-		const parsed = parseStat(value);
-		if (!el) return 0;
-		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !parsed.number) {
-			el.textContent = parsed.fallback;
-			return 0;
+var tweens = /* @__PURE__ */ new WeakMap();
+function paintCount(el, duration = 1.2) {
+	const parsed = parseStat(el.dataset.count ?? "");
+	tweens.get(el)?.kill();
+	if (!parsed.number) {
+		el.textContent = parsed.fallback;
+		return 0;
+	}
+	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || duration <= 0) {
+		el.textContent = formatStat(parsed.number, parsed.decimals, parsed.suffix);
+		return 0;
+	}
+	const state = { n: 0 };
+	el.textContent = formatStat(0, parsed.decimals, parsed.suffix);
+	const tween = gsapWithCSS.to(state, {
+		n: parsed.number,
+		duration,
+		ease: "power3.out",
+		onUpdate: () => {
+			el.textContent = formatStat(state.n, parsed.decimals, parsed.suffix);
+		},
+		onComplete: () => {
+			el.textContent = formatStat(parsed.number, parsed.decimals, parsed.suffix);
 		}
-		const state = { n: 0 };
-		el.textContent = formatStat(0, parsed.decimals, parsed.suffix);
-		gsapWithCSS.to(state, {
-			n: parsed.number,
-			duration,
-			ease: "power3.out",
-			onUpdate: () => {
-				el.textContent = formatStat(state.n, parsed.decimals, parsed.suffix);
-			}
-		});
-		return duration;
-	} }));
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-		ref: elRef,
-		className,
-		children: "0"
 	});
-});
+	tweens.set(el, tween);
+	return duration;
+}
+function CountUp({ value, className = "" }) {
+	const ref = (0, import_react.useRef)(null);
+	(0, import_react.useLayoutEffect)(() => {
+		const el = ref.current;
+		if (!el || el.textContent) return;
+		el.textContent = "0";
+	}, [value]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+		ref,
+		className,
+		"data-count": value
+	});
+}
 gsapWithCSS.registerPlugin(TextPlugin);
 function wordsOf(text) {
 	return text.trim().split(/\s+/).filter(Boolean);
@@ -159,26 +172,19 @@ var STATS = {
 };
 function Home() {
 	const boardRef = (0, import_react.useRef)(null);
-	const viewsRef = (0, import_react.useRef)(null);
-	const subsRef = (0, import_react.useRef)(null);
-	const videosRef = (0, import_react.useRef)(null);
-	const programsRef = (0, import_react.useRef)(null);
 	(0, import_react.useEffect)(() => {
 		const board = boardRef.current;
 		if (!board) return;
 		const cards = Array.from(board.querySelectorAll("[data-card]"));
-		const counters = [
-			viewsRef,
-			subsRef,
-			videosRef,
-			programsRef
-		];
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 			gsapWithCSS.set(cards, {
 				autoAlpha: 1,
 				y: 0
 			});
-			counters.forEach((counter) => counter.current?.play(0));
+			cards.forEach((card) => {
+				const el = card.querySelector("[data-count]");
+				if (el) paintCount(el, 0);
+			});
 			return;
 		}
 		gsapWithCSS.set(cards, {
@@ -194,7 +200,8 @@ function Home() {
 				duration: .42
 			});
 			tl.call(() => {
-				counters[index]?.current?.play(countDuration);
+				const el = card.querySelector("[data-count]");
+				if (el) paintCount(el, countDuration);
 			});
 			tl.to({}, { duration: countDuration });
 		});
@@ -221,7 +228,6 @@ function Home() {
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 						className: "hero-stat stat-hero rounded-lg text-on-primary",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CountUp, {
-							ref: viewsRef,
 							value: STATS.views,
 							className: "stat-hero-num"
 						})
@@ -237,19 +243,16 @@ function Home() {
 					className: "stat-tiles",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatCard, {
-							cardRef: subsRef,
 							value: STATS.subscribers,
 							ar: "عدد المشتركين",
 							en: "Subscribers"
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatCard, {
-							cardRef: videosRef,
 							value: STATS.videos,
 							ar: "عدد الفيديوهات",
 							en: "Videos"
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatCard, {
-							cardRef: programsRef,
 							value: STATS.programs,
 							ar: "البرامج",
 							en: "Programs"
@@ -260,12 +263,11 @@ function Home() {
 		})
 	});
 }
-function StatCard({ value, ar, en, cardRef }) {
+function StatCard({ value, ar, en }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("article", {
 		"data-card": true,
 		className: "tile-card rounded-md bg-surface",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CountUp, {
-			ref: cardRef,
 			value,
 			className: "tile-num"
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {

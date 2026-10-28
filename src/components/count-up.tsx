@@ -1,13 +1,9 @@
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 
 type CountUpProps = {
   value: string;
   className?: string;
-};
-
-export type CountUpHandle = {
-  play: (duration?: number) => number;
 };
 
 function parseStat(value: string) {
@@ -25,47 +21,52 @@ function parseStat(value: string) {
 
 function formatStat(n: number, decimals: number, suffix: string) {
   const body =
-    decimals > 0
-      ? n.toFixed(decimals)
-      : Math.round(n).toLocaleString("en-US");
+    decimals > 0 ? n.toFixed(decimals) : Math.round(n).toLocaleString("en-US");
   return body + suffix;
 }
 
-export const CountUp = forwardRef<CountUpHandle, CountUpProps>(function CountUp(
-  { value, className = "" },
-  ref,
-) {
-  const elRef = useRef<HTMLSpanElement>(null);
+const tweens = new WeakMap<HTMLElement, gsap.core.Tween>();
 
-  useImperativeHandle(ref, () => ({
-    play(duration = 1.2) {
-      const el = elRef.current;
-      const parsed = parseStat(value);
-      if (!el) return 0;
+export function paintCount(el: HTMLElement, duration = 1.2) {
+  const parsed = parseStat(el.dataset.count ?? "");
+  tweens.get(el)?.kill();
 
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce || !parsed.number) {
-        el.textContent = parsed.fallback;
-        return 0;
-      }
+  if (!parsed.number) {
+    el.textContent = parsed.fallback;
+    return 0;
+  }
 
-      const state = { n: 0 };
-      el.textContent = formatStat(0, parsed.decimals, parsed.suffix);
-      gsap.to(state, {
-        n: parsed.number,
-        duration,
-        ease: "power3.out",
-        onUpdate: () => {
-          el.textContent = formatStat(state.n, parsed.decimals, parsed.suffix);
-        },
-      });
-      return duration;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || duration <= 0) {
+    el.textContent = formatStat(parsed.number, parsed.decimals, parsed.suffix);
+    return 0;
+  }
+
+  const state = { n: 0 };
+  el.textContent = formatStat(0, parsed.decimals, parsed.suffix);
+  const tween = gsap.to(state, {
+    n: parsed.number,
+    duration,
+    ease: "power3.out",
+    onUpdate: () => {
+      el.textContent = formatStat(state.n, parsed.decimals, parsed.suffix);
     },
-  }));
+    onComplete: () => {
+      el.textContent = formatStat(parsed.number, parsed.decimals, parsed.suffix);
+    },
+  });
+  tweens.set(el, tween);
+  return duration;
+}
 
-  return (
-    <span ref={elRef} className={className}>
-      0
-    </span>
-  );
-});
+export function CountUp({ value, className = "" }: CountUpProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || el.textContent) return;
+    el.textContent = "0";
+  }, [value]);
+
+  return <span ref={ref} className={className} data-count={value} />;
+}
